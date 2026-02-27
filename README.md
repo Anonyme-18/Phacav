@@ -169,5 +169,6 @@ Export animation vidéo
 Projet éducatif et expérimental.
 
 👨‍🚀 Auteur
+AMOUZOU-ABLO Cédric Jean-Marc & PEREIRA DASILVA Péniel
 
 Simulation développée pour exploration scientifique et démonstration de modélisation procédurale appliquée à l’astrophysique.
