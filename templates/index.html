@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHACAV – Exoplanetary Atmospheric & Surface Simulation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0b0f19',
+                        cardbg: '#111827',
+                        accent: '#3b82f6',
+                        accenthover: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans antialiased flex flex-col justify-between">
+    
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-cardbg/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20 text-white">
+                    <i class="fa-solid fa-globe text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        PHACAV <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">v2.0 Enterprise</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Exoplanetary Atmospheric & Surface Scientific Modeling Engine</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/Anonyme-18/Phacav" target="_blank" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition border border-slate-700">
+                    <i class="fa-brands fa-github text-lg"></i> GitHub Repository
+                </a>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> NASA API Live
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Controls Sidebar -->
+        <div class="bg-cardbg border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-6">
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-blue-500"></i> Simulation Controls
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Select an exoplanet target to retrieve real-time data from NASA Exoplanet Archive and simulate its surface & winds.</p>
+                </div>
+
+                <!-- Planet Selector -->
+                <div class="space-y-2">
+                    <label for="planetSelect" class="text-sm font-medium text-slate-300">Target Exoplanet</label>
+                    <select id="planetSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition">
+                        <option value="TRAPPIST-1 e">TRAPPIST-1 e (Habitable Zone Rocky World)</option>
+                        <option value="Proxima Centauri b">Proxima Centauri b (Closest Exoplanet)</option>
+                    </select>
+                </div>
+
+                <!-- Custom Planet Input -->
+                <div class="space-y-2">
+                    <label for="customPlanet" class="text-sm font-medium text-slate-300">Or Custom Exoplanet Name</label>
+                    <input type="text" id="customPlanet" placeholder="e.g. Kepler-186f" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition">
+                </div>
+
+                <!-- Run Simulation Button -->
+                <button id="runBtn" onclick="runSimulation()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-play"></i> Run Simulation
+                </button>
+            </div>
+
+            <!-- Astrophysical Data Card -->
+            <div id="dataCard" class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-4 hidden space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400">Astrophysical Parameters</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                        <span class="text-slate-500 block">Planet Name</span>
+                        <span id="resName" class="font-semibold text-slate-200">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Radius</span>
+                        <span id="resRadius" class="font-semibold text-slate-200">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Orbital Period</span>
+                        <span id="resOrbit" class="font-semibold text-slate-200">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Stellar Temp</span>
+                        <span id="resTemp" class="font-semibold text-slate-200">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Display Area -->
+        <div class="lg:col-span-2 bg-cardbg border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-satellite text-blue-500"></i> Visualization Output
+                </h2>
+                <span id="statusBadge" class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+            </div>
+
+            <!-- Viewer Container -->
+            <div id="viewer" class="flex-grow flex items-center justify-center min-h-[350px] bg-slate-900/50 rounded-xl border border-slate-800/60 relative overflow-hidden">
+                <!-- Initial Placeholder State -->
+                <div id="placeholderState" class="text-center p-8 space-y-3">
+                    <div class="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center mx-auto text-2xl border border-blue-500/20">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <p class="text-sm font-medium text-slate-300">Awaiting Simulation Execution</p>
+                    <p class="text-xs text-slate-500 max-w-sm">Click "Run Simulation" to fetch NASA data, calculate fractal topography, and render synchronous atmospheric wind vectors.</p>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loadingState" class="hidden absolute inset-0 bg-darkbg/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10">
+                    <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs font-medium text-blue-400 animate-pulse">Computing planetary topography & atmospheric circulation...</p>
+                </div>
+
+                <!-- Result Image -->
+                <img id="resultImage" src="" alt="Exoplanet Simulation Render" class="hidden w-full h-auto rounded-lg shadow-2xl object-contain max-h-[500px]">
+            </div>
+
+            <!-- Action Footer -->
+            <div class="mt-6 flex justify-end gap-3">
+                <a id="downloadBtn" href="#" download="simulation_render.png" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Download High-Res Map
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-cardbg/50 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>PHACAV &copy; 2026 — Scientific Exoplanetary Simulation Engine. Crafted for Professional Portfolio & Research.</p>
+            <p class="flex items-center gap-1">Built with Python, NumPy, Matplotlib & Flask on Vercel</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Client Logic -->
+    <script>
+        async function runSimulation() {
+            const selectVal = document.getElementById('planetSelect').value;
+            const customVal = document.getElementById('customPlanet').value.trim();
+            const planetName = customVal !== "" ? customVal : selectVal;
+
+            const placeholderState = document.getElementById('placeholderState');
+            const loadingState = document.getElementById('loadingState');
+            const resultImage = document.getElementById('resultImage');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const statusBadge = document.getElementById('statusBadge');
+            const runBtn = document.getElementById('runBtn');
+            const dataCard = document.getElementById('dataCard');
+
+            // UI States
+            placeholderState.classList.add('hidden');
+            resultImage.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            statusBadge.textContent = 'Processing...';
+            statusBadge.className = 'text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20';
+            runBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/simulate?planet=${encodeURIComponent(planetName)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    resultImage.src = data.image_url;
+                    resultImage.classList.remove('hidden');
+                    downloadBtn.href = data.image_url;
+                    downloadBtn.classList.remove('hidden');
+                    
+                    // Populate data card
+                    const p = data.planet_data;
+                    document.getElementById('resName').textContent = p.pl_name || planetName;
+                    document.getElementById('resRadius').textContent = (p.pl_rade !== undefined ? p.pl_rade + " R⊕" : "N/A");
+                    document.getElementById('resOrbit').textContent = (p.pl_orbper !== undefined ? p.pl_orbper + " days" : "N/A");
+                    document.getElementById('resTemp').textContent = (p.st_teff !== undefined ? p.st_teff + " K" : "N/A");
+                    dataCard.classList.remove('hidden');
+
+                    statusBadge.textContent = 'Completed Successfully';
+                    statusBadge.className = 'text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                } else {
+                    alert('Simulation Error: ' + data.message);
+                    statusBadge.textContent = 'Failed';
+                    statusBadge.className = 'text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                    placeholderState.classList.remove('hidden');
+                }
+            } catch (err) {
+                alert('Network Error: ' + err.message);
+                statusBadge.textContent = 'Error';
+                statusBadge.className = 'text-xs px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                placeholderState.classList.remove('hidden');
+            } finally {
+                loadingState.classList.add('hidden');
+                runBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

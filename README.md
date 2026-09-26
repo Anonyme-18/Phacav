@@ -1,174 +1,106 @@
-🌍 TRAPPIST-1 e – Simulation Planétaire Simplifiée
+# 🪐 PHACAV: Exoplanetary Atmospheric & Surface Simulation Engine
 
-Simulation scientifique et visuelle de la surface et de la circulation atmosphérique de la planète TRAPPIST-1 e à partir des données publiques de la NASA Exoplanet Archive.
+[![CI Pipeline](https://github.com/Anonyme-18/Phacav/actions/workflows/ci.yml/badge.svg)](https://github.com/Anonyme-18/Phacav/actions/workflows/ci.yml)
+[![Vercel Deployment](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=flat&logo=vercel)](https://vercel.com)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Ce projet combine :
+> **PHACAV** is an advanced scientific simulation engine and interactive web application designed to model exoplanetary surface topography and tidal-locked atmospheric circulation using real astrophysical data from the NASA Exoplanet Archive.
 
-🔭 Données astrophysiques réelles
+---
 
-🏔 Génération procédurale de topographie (Perlin Noise)
+## 🔭 Scientific Overview
 
-🌬 Simulation atmosphérique simplifiée (modèle synchrone jour-nuit)
+Exoplanets in the habitable zone of red dwarf stars (such as **TRAPPIST-1 e** or **Proxima Centauri b**) are frequently in **synchronous rotation** (tidal locking). This extreme astrophysical phenomenon results in:
+* **Permanent Day-Side:** Intense stellar radiation and thermal input.
+* **Permanent Night-Side:** Eternal darkness and extreme cold.
+* **Global Wind Patterns:** Complex atmospheric thermal circulation driven by day-night pressure gradients and deflected by planetary topography.
 
-📊 Visualisation scientifique avec Matplotlib & Seaborn
+PHACAV models these systems by combining:
+1. **Real-Time NASA Data Retrieval:** Querying the NASA Exoplanet Archive TAP API (`pscomppars`) for physical parameters (radius, mass, orbital period, stellar temperature).
+2. **Procedural Fractal Topography:** Fast vectorized NumPy-based fractal noise (fractional Brownian motion) to generate realistic rocky surfaces.
+3. **Synchronous Atmospheric Dynamics:** Navier-Stokes simplified thermal flux modeling with elevation gradient coupling.
+4. **Interactive Scientific Web Dashboard:** A responsive dark-mode UI built with Flask and Tailwind CSS for real-time visualization and rendering.
 
-📌 Objectif
+---
 
-Créer une représentation scientifique stylisée de TRAPPIST-1 e incluant :
+## 🏗 System Architecture
 
-📡 Récupération des données physiques depuis l’archive NASA
+```text
+Phacav/
+├── app.py                 # Flask web application & Vercel serverless entrypoint
+├── simulation.py          # Core simulation engine (NASA API + Topography + Winds + Renderer)
+├── noise_generator.py     # Pure NumPy vectorized fractal noise generator (zero C compilation)
+├── requirements.txt       # Production dependencies
+├── vercel.json            # Vercel serverless deployment configuration
+├── templates/
+│   └── index.html         # Interactive scientific dashboard (Tailwind CSS)
+├── tests/
+│   └── test_simulation.py # Comprehensive Pytest suite
+└── .github/
+    └── workflows/ci.yml   # Continuous Integration pipeline
+```
 
-🗺 Génération d’une surface rocheuse procédurale
+---
 
-🌪 Simulation de vents globaux (planète en rotation synchrone)
+## 🚀 Getting Started
 
-🖼 Rendu final combinant relief + circulation atmosphérique
+### Prerequisites
+* Python 3.11 or higher
+* Pip package manager
 
-🧠 Contexte Scientifique
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Anonyme-18/Phacav.git
+cd Phacav
+```
 
-TRAPPIST-1 e est une exoplanète rocheuse située dans la zone habitable du système TRAPPIST-1.
-Elle est probablement en rotation synchrone, ce qui signifie :
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Une face toujours éclairée (jour permanent)
+### 3. Run Unit Tests
+```bash
+python -m pytest
+```
 
-Une face toujours sombre (nuit permanente)
+### 4. Start the Local Web Server
+```bash
+python app.py
+```
+Open your browser at `http://localhost:5000`.
 
-Une circulation atmosphérique influencée par ce contraste thermique extrême
+---
 
-Ce script modélise une version simplifiée de ce phénomène.
+## 🌍 Vercel Deployment
 
-🛠 Technologies Utilisées
+This project is fully configured for serverless deployment on [Vercel](https://vercel.com).
 
-Python 3
+1. Push your repository to GitHub.
+2. Import the project into Vercel.
+3. Vercel will automatically detect `vercel.json` and build the Python serverless application.
 
-requests → requêtes API NASA
+---
 
-numpy → calcul scientifique
+## 📊 Sample Visualizations
 
-noise → génération Perlin Noise
+Generated high-resolution maps include:
+* **Topographic Elevation Heatmaps** (normalized relative surface heights).
+* **Atmospheric Wind Quiver Overlays** (zonal and meridional velocity vectors).
+* **Astrophysical Summary Data Cards** (NASA confirmed parameters).
 
-matplotlib → visualisation
+---
 
-seaborn → rendu thermique
+## 📜 License
 
-logging → suivi des étapes
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-📂 Structure du Projet
-.
-├── main.py
+---
 
-⚙️ Installation
-1️⃣ Cloner le projet
-git clone <repo_url>
-cd <repo>
-2️⃣ Installer les dépendances
-pip install requests numpy matplotlib seaborn noise
-🚀 Exécution
-python main.py
-🔬 Fonctionnement Détaillé
-1️⃣ Récupération des données NASA
-fetch_planet_data(planet_name)
+## 👨‍💻 Authors
 
-Interroge l’API Exoplanet Archive
+* **AMOUZOU-ABLO Cédric Jean-Marc**
+* **PEREIRA DASILVA Péniel**
 
-Récupère :
-
-Rayon planétaire
-
-Température de l’étoile
-
-Période orbitale
-
-Masse
-
-Distance au système
-
-2️⃣ Génération de la Topographie
-generate_topography()
-
-Génération via Perlin Noise 2D
-
-8 octaves
-
-Normalisation entre 0 et 1
-
-Export : step2_topo.png
-
-3️⃣ Simulation Atmosphérique
-simulate_atmosphere(topo)
-
-Modèle simplifié :
-
-Vent zonal constant Est → Ouest
-
-Influence du relief via gradient
-
-Affichage vectoriel avec quiver
-
-Export : step3_winds.png
-
-4️⃣ Rendu Final
-final_render(topo, u, v, data)
-
-Heatmap terrain
-
-Superposition vecteurs atmosphériques
-
-Informations planétaires intégrées
-
-Export HD : final_planet_e.png
-
-🖼 Résultats Générés
-Fichier	Description
-step2_topo.png	Carte d'altitude relative
-step3_winds.png	Vecteurs atmosphériques
-final_planet_e.png	Rendu scientifique final
-📊 Paramètres Modifiables
-
-Dans le script :
-
-WIDTH, HEIGHT = 1024, 512
-TARGET_PLANET = "TRAPPIST-1 e"
-
-Tu peux :
-
-Augmenter la résolution
-
-Changer la planète (si présente dans l’archive NASA)
-
-Ajuster la force des vents
-
-Modifier la palette de couleurs
-
-⚠️ Limitations
-
-Modèle atmosphérique simplifié
-
-Pas de dynamique thermique réelle
-
-Pas de modélisation 3D sphérique
-
-Hypothèse de vent constant
-
-Ce projet est une visualisation scientifique pédagogique, pas un modèle climatologique complet.
-
-💡 Améliorations Possibles
-
-Intégrer une carte thermique jour/nuit
-
-Modéliser l’évaporation/condensation
-
-Ajouter un rendu sphérique 3D
-
-Simuler différentes compositions atmosphériques
-
-Export animation vidéo
-
-📜 Licence
-
-Projet éducatif et expérimental.
-
-👨‍🚀 Auteur
-AMOUZOU-ABLO Cédric Jean-Marc & PEREIRA DASILVA Péniel
-
-Simulation développée pour exploration scientifique et démonstration de modélisation procédurale appliquée à l’astrophysique.
+*Developed for scientific exploration, professional demonstration, and advanced exoplanetary modeling.*
